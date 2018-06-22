@@ -1,0 +1,26 @@
+#! /bin/bash
+
+for seek in TCP UDP
+do
+	for th in 1 2 4 8
+	do
+		for wk in 1 1000 32000 
+		do
+	
+		touch $seek"-"$wk"-"$th.slurm
+		echo "#!/bin/bash " >> $seek"-"$wk"-"$th.slurm
+
+		echo " " >> $seek"-"$wk"-"$th.slurm
+		echo "#SBATCH --nodes=2" >> $seek"-"$wk"-"$th.slurm
+		echo "#SBATCH --ntasks=2" >> $seek"-"$wk"-"$th.slurm
+		echo "#SBATCH --output=main.out" >> $seek"-"$wk"-"$th.slurm
+		echo "#SBATCH --wait-all-nodes=1" >> $seek"-"$wk"-"$th.slurm
+		echo " " >> $seek"-"$wk"-"$th.slurm
+		echo " echo $SLURM_JOB_NODELIST" >> $seek"-"$wk"-"$th.slurm
+		echo " " >> $seek"-"$wk"-"$th.slurm
+		#echo "sbcast MyNETBench-"$seek" /tmp/MyNETBench-"$seek >> $seek"-"$wk"-"$th.slurm
+		echo "sbcast "$seek"run.sh /tmp/"$seek"run.sh" >> $seek"-"$wk"-"$th.slurm
+		echo "srun /tmp/"$seek"run.sh" \$SLURM_JOB_NODELIST "/$(pwd)/network-"$seek"-"$wk"-"$th"thread.dat /$(pwd)/output/network-TCP-1-1thread.out.dat" >> $seek"-"$wk"-"$th.slurm
+	done 
+		done
+done

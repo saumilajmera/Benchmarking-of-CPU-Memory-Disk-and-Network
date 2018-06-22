@@ -1,0 +1,55 @@
+#! /bin/bash
+
+k=1
+
+for seek in {RR,WR}
+do
+	for wk in 1;
+	do
+		for th in {1,2,4,8,16,32,64,128}  
+		do
+	
+		touch disk$k.slurm
+		echo "#! /bin/bash " >> disk$k.slurm
+
+		echo " " >> disk$k.slurm
+		echo "#SBATCH --nodes=1" >> disk$k.slurm
+		echo "#SBATCH --output=main.out" >> disk$k.slurm
+		echo "#SBATCH --wait-all-nodes=1" >> disk$k.slurm
+		echo " " >> disk$k.slurm
+		echo " echo $SLURM_JOB_NODELIST" >> disk$k.slurm
+		echo " " >> disk$k.slurm
+		#echo "sbcast /$(pwd)/fileR.txt /tmp" >> disk$k.slurm
+		echo "./MyDiskBench /$(pwd)/disk-"$seek"-"$wk"-"$th"thread.dat /$(pwd)/output/disk-RR-1-1thread.out.dat" >> disk$k.slurm
+		k=$((k+1))
+	done 
+		done
+done
+
+s=$k
+
+for seek in {RS,WS,WR,RR}
+do
+	for wk in {1000,10000,100000} 
+	do
+		for th in {1,2,4}  
+		do
+	
+		touch disk$s.slurm
+		echo "#! /bin/bash " >> disk$s.slurm
+
+		echo " " >> disk$s.slurm
+		echo "#SBATCH --nodes=1" >> disk$s.slurm
+		echo "#SBATCH --output=main.out" >> disk$s.slurm
+		echo "#SBATCH --wait-all-nodes=1" >> disk$s.slurm
+		echo " " >> disk$s.slurm
+		echo " echo $SLURM_JOB_NODELIST" >> disk$s.slurm
+	
+		echo " " >> disk$s.slurm
+		#echo "sbcast /$(pwd)/fileR.txt /tmp" >> disk$s.slurm
+		echo "./MyDiskBench /$(pwd)/disk-"$seek"-"$wk"-"$th"thread.dat /$(pwd)/output/disk-RR-1-1thread.out.dat" >> disk$s.slurm
+		s=$((s+1))
+	done 
+		done
+done
+

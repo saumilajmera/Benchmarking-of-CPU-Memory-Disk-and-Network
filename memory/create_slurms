@@ -1,0 +1,27 @@
+#! /bin/bash
+
+k=1
+
+for seek in {RWR,RWS}
+do
+	for wk in {1,1000,1000000,10000000} 
+	do
+		for th in {1,2,4}  
+		do
+	
+		touch mem$k.slurm
+		echo "#! /bin/bash " >> mem$k.slurm
+
+		echo " " >> mem$k.slurm
+		echo "#SBATCH --nodes=1" >> mem$k.slurm
+		echo "#SBATCH --output=main.out" >> mem$k.slurm
+		echo "#SBATCH --wait-all-nodes=1" >> mem$k.slurm
+		echo " " >> mem$k.slurm
+		echo " echo $SLURM_JOB_NODELIST" >> mem$k.slurm
+		echo " " >> mem$k.slurm
+		echo "./MyRAMBench /$(pwd)/memory-"$seek"-"$wk"-"$th"thread.dat /$(pwd)/output/memory-RWR-1-1thread.out.dat" >> mem$k.slurm
+		k=$((k+1))
+	done 
+		done
+done
+
